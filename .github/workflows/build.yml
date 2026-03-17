@@ -14,13 +14,23 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Gradle wrapper
+      - name: Install Gradle 8.1
+        run: |
+          wget -q https://services.gradle.org/distributions/gradle-8.1-bin.zip
+          unzip -q gradle-8.1-bin.zip -d /opt/gradle
+          echo "/opt/gradle/gradle-8.1/bin" >> $GITHUB_PATH
+
+      - name: Generate Gradle Wrapper
         working-directory: AppKiller
-        run: gradle wrapper --gradle-version 8.0
+        run: gradle wrapper --gradle-version 8.1
+
+      - name: Make gradlew executable
+        working-directory: AppKiller
+        run: chmod +x gradlew
 
       - name: Build Debug APK
         working-directory: AppKiller
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
