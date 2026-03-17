@@ -1,0 +1,29 @@
+name: Build APK
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Unzip project
+        run: unzip AppKiller.zip
+
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle wrapper
+        working-directory: AppKiller
+        run: gradle wrapper --gradle-version 8.0
+
+      - name: Build Debug APK
+        working-directory: AppKiller
+        run: ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: AppKiller-debug
+          path: AppKiller/app/build/outputs/apk/debug/app-debug.apk
